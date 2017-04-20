@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Add Article"
+        android:id="@+id/add_article"
+        android:icon="@drawable/ic_action_add_list_name"
+        app:showAsAction="always" />
+
+    <item
+        android:title="Remove article"
+        android:id="@+id/remove_article"
+        android:icon="@drawable/ic_action_remove_article"
+        app:showAsAction="always" />
+
+    <item
+        android:title="Edit list name"
+        android:id="@+id/edit_name_list"
+        android:icon="@drawable/ic_action_edit_list_name"
+        app:showAsAction="always" />
+
+</menu>

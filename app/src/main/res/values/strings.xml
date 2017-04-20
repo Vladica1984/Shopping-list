@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ShoppingList</string>
+    <string name="NotCompleted">Not completed</string>
+    <string name="list_name">List name: </string>
+    <string name="prtctd">Protected</string>
+    <string name="completed">Completed</string>
+    <string name="enter_article_name">Enter article name</string>
+    <string name="enter_article_amount">Enter article amount</string>
+</resources>
