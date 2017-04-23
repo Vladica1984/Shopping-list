@@ -29,6 +29,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:textStyle="bold"
                 android:id="@+id/tv_articleName" />
 
             <TextView
@@ -39,24 +41,26 @@
 
             <TextView
                 android:layout_width="match_parent"
+                android:textSize="15dp"
+                android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_amount" />
+
+            <TextView
+                android:id="@+id/tv_purchasedOrNot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="purchasedOrNot" />
 
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="right|center"
-            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/ib_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/button_edit" />
 
             <ImageButton
                 android:id="@+id/ib_delete"
@@ -68,35 +72,4 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linearLayout3" >
-
-        <Button
-            android:id="@+id/button_purchase"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Purchase" />
-
-        <TextView
-            android:id="@+id/tv_purchaseOrNot"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="wrap_content"
-            android:hint="Purchased or not" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true" >
-
-    </LinearLayout>
-
 </LinearLayout>
-

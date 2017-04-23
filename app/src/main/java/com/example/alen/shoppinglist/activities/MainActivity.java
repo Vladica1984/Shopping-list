@@ -1,8 +1,13 @@
 package com.example.alen.shoppinglist.activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,10 +31,13 @@ public class MainActivity extends AppCompatActivity {
     public static String MAIN_KEY = "MAIN_KEY";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(R.string.app_name);
 
         try {
             final List<MainList> mainList = getDatabaseHelper().getmMainListDao().queryForAll();
@@ -47,14 +55,10 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Enter list name", Toast.LENGTH_SHORT).show();
                         return;
                     }
-//                    m.setComplete(getString(R.string.NotCompleted));
-//                    m.setProtect("Not protected");
-//                    m.setNoOfArticles("0 " + "Articles");
-//                    mainList.add(0, m);
                     listName.setText("");
-//                    adapter.notifyDataSetChanged();
                     try {
                         getDatabaseHelper().getmMainListDao().create(m);
+                        Log.i("What's in database", getDatabaseHelper().getmMainListDao().queryForAll().toString());
                         refresh();
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -62,14 +66,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             listView.setAdapter(adapter);
-
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     MainList m = (MainList) listView.getItemAtPosition(position);
                     Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                     intent.putExtra(MAIN_KEY, m.getIdMainList());
-                  //  intent.putExtra("nameOfList", mainList1.getNameOfList());
                     startActivity(intent);
                 }
             });
@@ -79,8 +81,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about:
+                AlertDialog.Builder about = new AlertDialog.Builder(this);
+                about.setTitle("O autoru");
+                about.setMessage("Vladimir Popovic" + "\nTelefon: +38164 101-98-67" + "\n" + "Email: popovic.b.vladimir@gmail.com");
+                about.show();
+                about.setCancelable(true);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     protected void onResume() {
         refresh();
+        try {
+            Log.i("What's in database", getDatabaseHelper().getmMainListDao().queryForAll().toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         super.onResume();
     }
 
@@ -91,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             ListMainAdapter adapter = (ListMainAdapter) mainList.getAdapter();
             if (adapter != null) {
                 try {
+                    adapter.clear();
                     List<MainList> list = getDatabaseHelper().getmMainListDao().queryForAll();
                     adapter.updateAdapter((ArrayList<MainList>) list);
                 } catch (SQLException e) {

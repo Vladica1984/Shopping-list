@@ -14,6 +14,8 @@ public class Items {
     public static final String TABLE_FIELD_ID = "id";
     public static final String TABLE_FIELD_NAME = "name";
     public static final String TABLE_FIELD_AMOUNT = "amount";
+    public static final String TABLE_FIELD_PURCHASED = "purchased";
+    public static final String TABLE_FIELD_PURCHASED_STATUS = "purchased_status";
     public static final String TABLE_FIELD_MAINLIST = "main_list";
 
     @DatabaseField(columnName = TABLE_FIELD_ID, generatedId = true)
@@ -22,10 +24,30 @@ public class Items {
     private String name;
     @DatabaseField(columnName = TABLE_FIELD_AMOUNT)
     private String amount;
+    @DatabaseField(columnName = TABLE_FIELD_PURCHASED)
+    private boolean purchased;
+    @DatabaseField (columnName = TABLE_FIELD_PURCHASED_STATUS)
+    private String purchasedStatus;
     @DatabaseField(columnName = TABLE_FIELD_MAINLIST, foreign = true, foreignAutoRefresh = true)
     private MainList mainList;
 
     public Items() {
+    }
+
+    public boolean isPurchased() {
+        return purchased;
+    }
+
+    public void setPurchased(boolean purchased) {
+        this.purchased = purchased;
+    }
+
+    public String getPurchasedStatus() {
+        return purchasedStatus;
+    }
+
+    public void setPurchasedStatus(String purchasedStatus) {
+        this.purchasedStatus = purchasedStatus;
     }
 
     public int getIdItems() {
@@ -66,6 +88,8 @@ public class Items {
                 "idItems=" + idItems +
                 ", name='" + name + '\'' +
                 ", amount='" + amount + '\'' +
+                ", purchased=" + purchased +
+                ", purchasedStatus='" + purchasedStatus + '\'' +
                 ", mainList=" + mainList +
                 '}';
     }

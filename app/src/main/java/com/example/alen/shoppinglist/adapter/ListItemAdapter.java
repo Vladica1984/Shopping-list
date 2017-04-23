@@ -1,17 +1,15 @@
 package com.example.alen.shoppinglist.adapter;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.alen.shoppinglist.Database.ORMDataBaseHelper;
@@ -19,6 +17,7 @@ import com.example.alen.shoppinglist.R;
 import com.example.alen.shoppinglist.model.Items;
 import com.example.alen.shoppinglist.model.MainList;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,11 +28,17 @@ import java.util.ArrayList;
 
 public class ListItemAdapter extends BaseAdapter {
 
+    ArrayList<String> statusList = new ArrayList<>();
+    Dao<Items, Integer> mItemsDao;
+    private CheckBox checkBox;
     private MainList mainList;
     private ORMDataBaseHelper databaseHelper;
     private Context context;
     private ArrayList<Items> itemses;
-    int shoppingList_id;
+    Items items = new Items();
+    public Switch s;
+    boolean[] checkBoxState;
+
 
     public ListItemAdapter(Context context, ArrayList<Items> itemses) {
         this.context = context;
@@ -62,11 +67,19 @@ public class ListItemAdapter extends BaseAdapter {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.adapter_item_list, null);
         }
-            TextView name = (TextView) convertView.findViewById(R.id.tv_articleName);
-            name.setText(itemses.get(position).getName());
+        TextView name = (TextView) convertView.findViewById(R.id.tv_articleName);
+        name.setText(itemses.get(position).getName());
 
-            TextView amount = (TextView) convertView.findViewById(R.id.tv_amount);
-            amount.setText(itemses.get(position).getAmount());
+        TextView amount = (TextView) convertView.findViewById(R.id.tv_amount);
+        amount.setText(itemses.get(position).getAmount());
+
+        TextView purchasedStatus = (TextView) convertView.findViewById(R.id.tv_purchasedOrNot);
+        purchasedStatus.setText(itemses.get(position).getPurchasedStatus());
+        if (purchasedStatus.getText().toString().equals("Purchased")) {
+            purchasedStatus.setText(R.string.purchased);
+        } else {
+            purchasedStatus.setText(R.string.not_purchased);
+        }
 
         ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.ib_delete);
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -89,42 +102,44 @@ public class ListItemAdapter extends BaseAdapter {
                 dialog.show();
             }
         });
-
-        ImageButton editButton = (ImageButton) convertView.findViewById(R.id.ib_edit);
-        final View finalConvertView = convertView;
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.dialog_edit_articles);
-                dialog.setTitle("Edit article details");
-
-                Button ok = (Button)dialog.findViewById(R.id.button_edit_article);
-                ok.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        EditText articleName = (EditText)dialog.findViewById(R.id.et_edit_nameArticle);
-                        EditText articleAmount = (EditText)dialog.findViewById(R.id.et_edit_amountArticle);
-
-                        try {
-                            Items items = getDatabaseHelper().getmItemsDao().queryForId(position);
-                            items.setName(articleName.getText().toString());
-                            items.setAmount(articleAmount.getText().toString());
-                            Log.i ("ime",items.getName());
-                            Log.i ("amount",items.getAmount());
-                            getDatabaseHelper().getmItemsDao().update(items);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
-        });
-
         return convertView;
     }
+
+//        ImageButton editButton = (ImageButton) convertView.findViewById(R.id.ib_edit);
+//        final View finalConvertView = convertView;
+//        editButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final Dialog dialog = new Dialog(context);
+//                dialog.setContentView(R.layout.dialog_edit_articles);
+//                dialog.setTitle("Edit article details");
+//
+//                Button ok = (Button)dialog.findViewById(R.id.button_edit_article);
+//                ok.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        EditText articleName = (EditText)dialog.findViewById(R.id.et_edit_nameArticle);
+//                        EditText articleAmount = (EditText)dialog.findViewById(R.id.et_edit_amountArticle);
+//
+//                        try {
+//                            Items items = getDatabaseHelper().getmItemsDao().queryForId(position);
+//                            items.setName(articleName.getText().toString());
+//                            items.setAmount(articleAmount.getText().toString());
+//                            Log.i ("ime",items.getName());
+//                            Log.i ("amount",items.getAmount());
+//                            getDatabaseHelper().getmItemsDao().update(items);
+//                        } catch (SQLException e) {
+//                            e.printStackTrace();
+//                        }
+//                        dialog.dismiss();
+//                    }
+//                });
+//                dialog.show();
+//            }
+//        });
+//
+//        return convertView;
+//    }
 
     public ORMDataBaseHelper getDatabaseHelper() {
         if (databaseHelper == null) {

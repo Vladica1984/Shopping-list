@@ -1,6 +1,5 @@
 package com.example.alen.shoppinglist.Database;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 

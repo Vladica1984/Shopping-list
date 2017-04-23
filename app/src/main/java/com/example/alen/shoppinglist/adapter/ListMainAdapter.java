@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.alen.shoppinglist.R;
+import com.example.alen.shoppinglist.model.Items;
 import com.example.alen.shoppinglist.model.MainList;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class ListMainAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<MainList> mainLists;
+    private Items items = new Items();
 
     public ListMainAdapter(Context context, ArrayList<MainList> mainLists) {
         this.context = context;
@@ -67,5 +69,9 @@ public class ListMainAdapter extends BaseAdapter {
     public void updateAdapter(ArrayList<MainList> list) {
         this.mainLists = list;
         notifyDataSetChanged();
+    }
+
+    public void clear() {
+        mainLists.clear();
     }
 }

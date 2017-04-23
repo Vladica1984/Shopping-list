@@ -1,7 +1,10 @@
 package com.example.alen.shoppinglist.activities;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.Toolbar;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.alen.shoppinglist.Database.ORMDataBaseHelper;
 import com.example.alen.shoppinglist.R;
@@ -34,12 +38,13 @@ public class SecondActivity extends AppCompatActivity {
 
     ORMDataBaseHelper databaseHelper;
     MainList mainList;
-    Items items = null;
-    Items i = new Items();
     int key;
     ListView listView;
-
+    Toolbar toolbar;
+    Items iAdd = new Items();
+    public static String DETAIL_KEY = "DETAIL_KEY";
     private List<Items> list;
+
     //private ListItemAdapter adapter;
 
     @Override
@@ -47,7 +52,7 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(R.string.app_name);
 
@@ -56,7 +61,7 @@ public class SecondActivity extends AppCompatActivity {
         try {
             mainList = getDatabaseHelper().getmMainListDao().queryForId(key);
 
-            TextView listName = (TextView) findViewById(R.id.tv_nameListInActivitySecond);
+            final TextView listName = (TextView) findViewById(R.id.tv_nameListInActivitySecond);
             listName.setText(mainList.getNameOfList());
 
             list = getDatabaseHelper().getmItemsDao().queryBuilder().
@@ -64,53 +69,63 @@ public class SecondActivity extends AppCompatActivity {
                     eq(Items.TABLE_FIELD_MAINLIST, mainList.getIdMainList()).
                     query();
             listView = (ListView) findViewById(R.id.lv_listItem);
-            ListItemAdapter adapter = new ListItemAdapter(SecondActivity.this, (ArrayList<Items>) list);
+            final ListItemAdapter adapter = new ListItemAdapter(SecondActivity.this, (ArrayList<Items>) list);
             //final ListView listView = (ListView) findViewById(R.id.list_item);
             //adapter = new ListItemAdapter(SecondActivity.this, (ArrayList<Items>) list);
             listView.setAdapter(adapter);
 
-            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, long id) {
-                    final Dialog dialog = new Dialog(SecondActivity.this);
-                    dialog.setContentView(R.layout.dialog_edit_articles);
-                    dialog.setTitle("Edit article details");
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Items i = (Items) listView.getItemAtPosition(position);
+                    Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
+                    intent.putExtra(DETAIL_KEY, i.getIdItems());
+                    startActivity(intent);
 
-                    Button ok = (Button) dialog.findViewById(R.id.button_edit_article);
-                    ok.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            EditText articleName = (EditText)dialog.findViewById(R.id.et_edit_nameArticle);
-                            EditText articleAmount = (EditText)dialog.findViewById(R.id.et_edit_amountArticle);
-                            i.setName(articleName.getText().toString());
-                            i.setAmount(articleAmount.getText().toString());
-
-                            Log.i("ime sa polja",articleName.toString());
-                            Log.i("ime",i.getName());
-                            Log.i("vrednost",i.getAmount());
-
-                            try {
-                                getDatabaseHelper().getmItemsDao().update(i);
-                                refresh();
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
-                    return false;
+//                    final Dialog dialog = new Dialog(SecondActivity.this);
+//                    dialog.setContentView(R.layout.dialog_edit_articles);
+//                    dialog.setTitle("Edit article details");
+//
+//                    Button ok = (Button) dialog.findViewById(R.id.button_edit_article);
+//                    ok.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            EditText articleName = (EditText)dialog.findViewById(R.id.et_edit_nameArticle);
+//                            EditText articleAmount = (EditText)dialog.findViewById(R.id.et_edit_amountArticle);
+//                            i.setName(articleName.getText().toString());
+//                            i.setAmount(articleAmount.getText().toString());
+//
+//                            Log.i("ime sa polja",articleName.toString());
+//                            Log.i("ime",i.getName());
+//                            Log.i("vrednost",i.getAmount());
+//
+//                            try {
+//                                getDatabaseHelper().getmItemsDao().update(i);
+//                                refresh();
+//                            } catch (SQLException e) {
+//                                e.printStackTrace();
+//                            }
+//                            dialog.dismiss();
+//                        }
+//                    });
+//                    dialog.show();
+//                    return false;
                 }
             });
-        }
-        catch (java.sql.SQLException e) {
+        } catch (java.sql.SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
+    protected void onStart() {
+        refresh();
+        super.onStart();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_second, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -119,28 +134,25 @@ public class SecondActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.add_article:
                 final Dialog dialog = new Dialog(this);
-                dialog.setContentView(R.layout.dialog_item_list);
-
-                Button add = (Button) dialog.findViewById(R.id.btn_addArticle);
+                dialog.setContentView(R.layout.dialog_edit_articles);
+                Button add = (Button) dialog.findViewById(R.id.button_edit_article);
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText articleName = (EditText)dialog.findViewById(R.id.et_nameOfArticle);
-                        EditText articleAmount = (EditText)dialog.findViewById(R.id.et_amountOfArticle);
+                        EditText articleName = (EditText)dialog.findViewById(R.id.et_edit_nameArticle);
+                        EditText articleAmount = (EditText)dialog.findViewById(R.id.et_edit_amountArticle);
 
-                        i.setName(articleName.getText().toString());
-                        i.setAmount(articleAmount.getText().toString());
-                        i.setMainList(mainList);
-
-                        try {
-                            Log.i("Sta je u bazi", String.valueOf(getDatabaseHelper().getmItemsDao().queryBuilder().where().eq(Items.TABLE_FIELD_NAME, i.getName())));
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        iAdd.setName(articleName.getText().toString());
+                        iAdd.setAmount(articleAmount.getText().toString());
+                        if (iAdd.getName().equals("") && iAdd.getAmount().equals("")) {
+                            Toast.makeText(SecondActivity.this, "Enter name and amount", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-
+                        iAdd.setMainList(mainList);
                         try {
-                            getDatabaseHelper().getmItemsDao().create(i);
+                            getDatabaseHelper().getmItemsDao().create(iAdd);
                             refresh();
+                            Log.i("Sta je u bazi", getDatabaseHelper().getmItemsDao().queryForAll().toString());
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
@@ -150,16 +162,28 @@ public class SecondActivity extends AppCompatActivity {
                 dialog.show();
                 break;
 
-            case R.id.remove_article:
-                try {
-                    getDatabaseHelper().getmMainListDao().delete(mainList);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                finish();
+            case R.id.remove_list:
+                final AlertDialog.Builder removeListDialog = new AlertDialog.Builder(SecondActivity.this);
+                removeListDialog.setTitle("Do you want to delete list ?");
+                removeListDialog.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            iAdd = getDatabaseHelper().getmItemsDao().queryForId(key);
+                            getDatabaseHelper().getmItemsDao().delete(iAdd);
+                            getDatabaseHelper().getmMainListDao().delete(mainList);
+                            refresh();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        finish();
+                    }
+                });
+                removeListDialog.show();
                 break;
             case R.id.edit_name_list:
                 final Dialog dialog2 = new Dialog(this);
+                dialog2.setContentView(R.layout.dialog_edit_name_list);
 
                 Button add2 = (Button)dialog2.findViewById(R.id.button_edit_list_name_add);
                 add2.setOnClickListener(new View.OnClickListener() {
@@ -167,9 +191,10 @@ public class SecondActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         EditText listName = (EditText) dialog2.findViewById(R.id.et_edit_list_name);
 
-                        mainList.setNameOfList(listName.getText().toString());
                         try {
-                            getDatabaseHelper().getmMainListDao().update(mainList);
+                            MainList mlEdit = getDatabaseHelper().getmMainListDao().queryForId(key);
+                            mlEdit.setNameOfList(listName.getText().toString());
+                            getDatabaseHelper().getmMainListDao().update(mlEdit);
                             refresh();
                         } catch (SQLException e) {
                             e.printStackTrace();
@@ -182,6 +207,12 @@ public class SecondActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        refresh();
+        super.onResume();
     }
 
     private void refresh() {
@@ -219,5 +250,10 @@ public class SecondActivity extends AppCompatActivity {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
