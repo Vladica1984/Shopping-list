@@ -28,16 +28,9 @@ import java.util.ArrayList;
 
 public class ListItemAdapter extends BaseAdapter {
 
-    ArrayList<String> statusList = new ArrayList<>();
-    Dao<Items, Integer> mItemsDao;
-    private CheckBox checkBox;
-    private MainList mainList;
     private ORMDataBaseHelper databaseHelper;
     private Context context;
     private ArrayList<Items> itemses;
-    Items items = new Items();
-    public Switch s;
-    boolean[] checkBoxState;
 
 
     public ListItemAdapter(Context context, ArrayList<Items> itemses) {
@@ -74,6 +67,7 @@ public class ListItemAdapter extends BaseAdapter {
         amount.setText(itemses.get(position).getAmount());
 
         TextView purchasedStatus = (TextView) convertView.findViewById(R.id.tv_purchasedOrNot);
+
         purchasedStatus.setText(itemses.get(position).getPurchasedStatus());
         if (purchasedStatus.getText().toString().equals("Purchased")) {
             purchasedStatus.setText(R.string.purchased);
@@ -104,42 +98,6 @@ public class ListItemAdapter extends BaseAdapter {
         });
         return convertView;
     }
-
-//        ImageButton editButton = (ImageButton) convertView.findViewById(R.id.ib_edit);
-//        final View finalConvertView = convertView;
-//        editButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final Dialog dialog = new Dialog(context);
-//                dialog.setContentView(R.layout.dialog_edit_articles);
-//                dialog.setTitle("Edit article details");
-//
-//                Button ok = (Button)dialog.findViewById(R.id.button_edit_article);
-//                ok.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        EditText articleName = (EditText)dialog.findViewById(R.id.et_edit_nameArticle);
-//                        EditText articleAmount = (EditText)dialog.findViewById(R.id.et_edit_amountArticle);
-//
-//                        try {
-//                            Items items = getDatabaseHelper().getmItemsDao().queryForId(position);
-//                            items.setName(articleName.getText().toString());
-//                            items.setAmount(articleAmount.getText().toString());
-//                            Log.i ("ime",items.getName());
-//                            Log.i ("amount",items.getAmount());
-//                            getDatabaseHelper().getmItemsDao().update(items);
-//                        } catch (SQLException e) {
-//                            e.printStackTrace();
-//                        }
-//                        dialog.dismiss();
-//                    }
-//                });
-//                dialog.show();
-//            }
-//        });
-//
-//        return convertView;
-//    }
 
     public ORMDataBaseHelper getDatabaseHelper() {
         if (databaseHelper == null) {

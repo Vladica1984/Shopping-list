@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.alen.shoppinglist.Database.ORMDataBaseHelper;
 import com.example.alen.shoppinglist.R;
 import com.example.alen.shoppinglist.adapter.ListMainAdapter;
+import com.example.alen.shoppinglist.model.Items;
 import com.example.alen.shoppinglist.model.MainList;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -27,8 +28,26 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    ORMDataBaseHelper databaseHelper;
+    private ORMDataBaseHelper databaseHelper;
     public static String MAIN_KEY = "MAIN_KEY";
+    private List<MainList> mainList;
+    private ListMainAdapter adapter;
+
+    public enum Completed {
+        COMPLETED("Completed"),
+        NOT_COMPLETED("Not completed");
+
+        private String text;
+
+        Completed (final String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(R.string.app_name);
 
         try {
-            final List<MainList> mainList = getDatabaseHelper().getmMainListDao().queryForAll();
+            mainList = getDatabaseHelper().getmMainListDao().queryForAll();
             final ListView listView = (ListView) findViewById(R.id.lv_list);
-            final ListMainAdapter adapter = new ListMainAdapter(MainActivity.this, (ArrayList<MainList>) mainList);
+            adapter = new ListMainAdapter(MainActivity.this, (ArrayList<MainList>) mainList);
 
             Button add = (Button) findViewById(R.id.button_add);
             add.setOnClickListener(new View.OnClickListener() {
@@ -51,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     EditText listName = (EditText) findViewById(R.id.et_nameOfList);
                     MainList m = new MainList();
                     m.setNameOfList(listName.getText().toString());
+                    m.setComplete(Completed.NOT_COMPLETED.toString());
                     if (m.getNameOfList().equals("")) {
                         Toast.makeText(MainActivity.this, "Enter list name", Toast.LENGTH_SHORT).show();
                         return;
@@ -78,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        refresh();
     }
 
     @Override
@@ -141,6 +163,25 @@ public class MainActivity extends AppCompatActivity {
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
+        }
+    }
+
+    private void completedMainList() {
+        for (MainList main: mainList) {
+            for (Items items: main.getItems()) {
+                if (!items.isPurchased()) {
+                    main.setComplete(Completed.NOT_COMPLETED.toString());
+                    break;
+                } else {
+                    main.setComplete(Completed.COMPLETED.toString());
+                    break;
+                }
+            }
+            try {
+                getDatabaseHelper().getmMainListDao().update(main);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

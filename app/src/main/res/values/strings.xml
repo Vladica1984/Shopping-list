@@ -7,7 +7,10 @@
     <string name="enter_article_name">Enter article name</string>
     <string name="enter_article_amount">Enter article amount</string>
     <string name="edit_article_detail">Edit article detail</string>
+    <string name="mark_as_purchased">Mark as purchased</string>
+    <string name="mark_as_purchased_cb">Mark as purchased</string>
     <string name="name_of_list">Name of list</string>
     <string name="purchased">Purchased</string>
     <string name="not_purchased">Not purchased</string>
+    <string name="password">password</string>
 </resources>

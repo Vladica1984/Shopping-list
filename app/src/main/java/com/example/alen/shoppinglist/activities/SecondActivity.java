@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.alen.shoppinglist.Database.ORMDataBaseHelper;
 import com.example.alen.shoppinglist.R;
 import com.example.alen.shoppinglist.adapter.ListItemAdapter;
+import com.example.alen.shoppinglist.adapter.ListMainAdapter;
 import com.example.alen.shoppinglist.model.Items;
 import com.example.alen.shoppinglist.model.MainList;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -36,12 +37,14 @@ import java.util.List;
 
 public class SecondActivity extends AppCompatActivity {
 
-    ORMDataBaseHelper databaseHelper;
-    MainList mainList;
-    int key;
-    ListView listView;
-    Toolbar toolbar;
-    Items iAdd = new Items();
+    private ORMDataBaseHelper databaseHelper;
+    private MainList mainList;
+    private List<MainList> ml;
+    private int key;
+    private Items items;
+    private ListView listView;
+    private Toolbar toolbar;
+    private Items iAdd = new Items();
     public static String DETAIL_KEY = "DETAIL_KEY";
     private List<Items> list;
 
@@ -55,6 +58,8 @@ public class SecondActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(R.string.app_name);
+
+        refresh();
 
         key = getIntent().getExtras().getInt(MainActivity.MAIN_KEY);
 
@@ -118,12 +123,6 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        refresh();
-        super.onStart();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_second, menu);
         return super.onCreateOptionsMenu(menu);
@@ -152,7 +151,7 @@ public class SecondActivity extends AppCompatActivity {
                         try {
                             getDatabaseHelper().getmItemsDao().create(iAdd);
                             refresh();
-                            Log.i("Sta je u bazi", getDatabaseHelper().getmItemsDao().queryForAll().toString());
+                            Log.i("What's in database ", getDatabaseHelper().getmItemsDao().queryForAll().toString());
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
@@ -212,6 +211,14 @@ public class SecondActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         refresh();
+        refreshMainList();
+        try {
+            Log.i("Baza article list", getDatabaseHelper().getmMainListDao().queryForAll().toString());
+            getDatabaseHelper().getmMainListDao().update(mainList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         super.onResume();
     }
 
@@ -235,6 +242,23 @@ public class SecondActivity extends AppCompatActivity {
         }
     }
 
+
+    private void refreshMainList() {
+        ListView mainList = (ListView) findViewById(R.id.lv_list);
+        if (mainList != null) {
+            ListMainAdapter adapter = (ListMainAdapter) mainList.getAdapter();
+            if (adapter != null) {
+                try {
+                    adapter.clear();
+                    List<MainList> list = getDatabaseHelper().getmMainListDao().queryForAll();
+                    adapter.updateAdapter((ArrayList<MainList>) list);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public ORMDataBaseHelper getDatabaseHelper() {
         if (databaseHelper == null) {
             databaseHelper = OpenHelperManager.getHelper(this, ORMDataBaseHelper.class);
@@ -249,6 +273,25 @@ public class SecondActivity extends AppCompatActivity {
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
+        }
+    }
+
+    private void completedMainList() {
+        for (MainList main: ml) {
+            for (Items items: main.getItems()) {
+                if (!items.isPurchased()) {
+                    main.setComplete(MainActivity.Completed.NOT_COMPLETED.toString());
+                    break;
+                } else {
+                    main.setComplete(MainActivity.Completed.COMPLETED.toString());
+                    break;
+                }
+            }
+            try {
+                getDatabaseHelper().getmMainListDao().update(main);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

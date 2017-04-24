@@ -12,6 +12,8 @@ import com.example.alen.shoppinglist.model.Items;
 import com.example.alen.shoppinglist.model.MainList;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Alen on 18-Apr-17.
@@ -21,7 +23,6 @@ public class ListMainAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<MainList> mainLists;
-    private Items items = new Items();
 
     public ListMainAdapter(Context context, ArrayList<MainList> mainLists) {
         this.context = context;
@@ -57,9 +58,6 @@ public class ListMainAdapter extends BaseAdapter {
         TextView complete = (TextView) convertView.findViewById(R.id.tv_mainCompleted);
         complete.setText(mainLists.get(position).getComplete());
 
-//        TextView noArticles = (TextView) convertView.findViewById(R.id.tv_noOfArticles);
-//        noArticles.setText(mainLists.get(position).getNoOfArticles());
-
         TextView protect = (TextView) convertView.findViewById(R.id.tv_protected);
         protect.setText(mainLists.get(position).getProtect());
 
@@ -74,4 +72,6 @@ public class ListMainAdapter extends BaseAdapter {
     public void clear() {
         mainLists.clear();
     }
+
+
 }

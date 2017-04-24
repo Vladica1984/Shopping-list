@@ -90,6 +90,11 @@ public class MainList {
 
     @Override
     public String toString() {
-        return nameOfList;
+        return "MainList{" +
+                "nameofList='" + nameOfList + '\'' +
+                ", complete='" + complete + '\'' +
+                ", protect='" + protect + '\'' +
+                ", idMainList=" + idMainList +
+                '}';
     }
 }
