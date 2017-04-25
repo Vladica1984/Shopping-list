@@ -35,7 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     public enum Completed {
         COMPLETED("Completed"),
-        NOT_COMPLETED("Not completed");
+        NOT_COMPLETED("Not completed"),
+        PURCHASED("Purchased"),
+        NOT_PURCHASED("Not purchased");
 
         private String text;
 

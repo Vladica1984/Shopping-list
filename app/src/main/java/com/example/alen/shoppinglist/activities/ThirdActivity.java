@@ -35,6 +35,7 @@ public class ThirdActivity extends AppCompatActivity {
     private ORMDataBaseHelper databaseHelper;
     private Items i;
     private TextView name;
+    private MainActivity mainActivity;
     private TextView amount;
     private MainList mainList;
     private List<MainList> ml;
@@ -64,16 +65,16 @@ public class ThirdActivity extends AppCompatActivity {
         }
 
         final CheckBox c = (CheckBox) findViewById(R.id.cb_purchase);
-        c.setChecked(c.isChecked());
+        c.setChecked(i.isPurchased());
         c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (c.isChecked()) {
-                    c.setText("Purchased");
+                    c.setText(MainActivity.Completed.COMPLETED.toString());
                     c.setChecked(true);
                     try {
                         i.setPurchased(true);
-                        i.setPurchasedStatus("Purchased");
+                        i.setPurchasedStatus(MainActivity.Completed.PURCHASED.toString());
                         getDatabaseHelper().getmItemsDao().update(i);
                         Log.i("Database after Items", getDatabaseHelper().getmItemsDao().queryForAll().toString());
                         Log.i("Database after MainList", getDatabaseHelper().getmMainListDao().queryForAll().toString());
@@ -81,14 +82,16 @@ public class ThirdActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    c.setText("Not purchased");
+                    c.setText(MainActivity.Completed.NOT_PURCHASED.toString());
                     c.setChecked(false);
                     try {
                         i.setPurchased(false);
-                        i.setPurchasedStatus("Not purchased");
+                        i.setPurchasedStatus(MainActivity.Completed.NOT_PURCHASED.toString());
                         getDatabaseHelper().getmItemsDao().update(i);
+
                         Log.i("Database after Items", getDatabaseHelper().getmItemsDao().queryForAll().toString());
                         Log.i("Database after MainList", getDatabaseHelper().getmMainListDao().queryForAll().toString());
+
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -97,9 +100,9 @@ public class ThirdActivity extends AppCompatActivity {
             }
         });
         if (c.isChecked()) {
-            c.setText("Purchased");
+            c.setText(MainActivity.Completed.PURCHASED.toString());
         } else {
-            c.setText("Not purchased");
+            c.setText(MainActivity.Completed.NOT_PURCHASED.toString());
         }
     }
 
@@ -166,16 +169,6 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        try {
-            Log.i("Database!!!", getDatabaseHelper().getmMainListDao().queryForAll().toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        super.onResume();
     }
 
     @Override
