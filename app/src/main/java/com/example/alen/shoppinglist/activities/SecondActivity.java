@@ -39,16 +39,14 @@ public class SecondActivity extends AppCompatActivity {
 
     private ORMDataBaseHelper databaseHelper;
     private MainList mainList;
-    private List<MainList> ml;
+//    private List<MainList> ml;
     private int key;
-    private Items items;
+  //  private Items items;
     private ListView listView;
     private Toolbar toolbar;
     private Items iAdd = new Items();
     public static String DETAIL_KEY = "DETAIL_KEY";
     private List<Items> list;
-
-    //private ListItemAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +73,7 @@ public class SecondActivity extends AppCompatActivity {
                     query();
             listView = (ListView) findViewById(R.id.lv_listItem);
             final ListItemAdapter adapter = new ListItemAdapter(SecondActivity.this, (ArrayList<Items>) list);
-            //final ListView listView = (ListView) findViewById(R.id.list_item);
-            //adapter = new ListItemAdapter(SecondActivity.this, (ArrayList<Items>) list);
+
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -86,36 +83,7 @@ public class SecondActivity extends AppCompatActivity {
                     Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
                     intent.putExtra(DETAIL_KEY, i.getIdItems());
                     startActivity(intent);
-
-//                    final Dialog dialog = new Dialog(SecondActivity.this);
-//                    dialog.setContentView(R.layout.dialog_edit_articles);
-//                    dialog.setTitle("Edit article details");
-//
-//                    Button ok = (Button) dialog.findViewById(R.id.button_edit_article);
-//                    ok.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            EditText articleName = (EditText)dialog.findViewById(R.id.et_edit_nameArticle);
-//                            EditText articleAmount = (EditText)dialog.findViewById(R.id.et_edit_amountArticle);
-//                            i.setName(articleName.getText().toString());
-//                            i.setAmount(articleAmount.getText().toString());
-//
-//                            Log.i("ime sa polja",articleName.toString());
-//                            Log.i("ime",i.getName());
-//                            Log.i("vrednost",i.getAmount());
-//
-//                            try {
-//                                getDatabaseHelper().getmItemsDao().update(i);
-//                                refresh();
-//                            } catch (SQLException e) {
-//                                e.printStackTrace();
-//                            }
-//                            dialog.dismiss();
-//                        }
-//                    });
-//                    dialog.show();
-//                    return false;
-                }
+               }
             });
         } catch (java.sql.SQLException e) {
             e.printStackTrace();
@@ -242,7 +210,6 @@ public class SecondActivity extends AppCompatActivity {
         }
     }
 
-
     private void refreshMainList() {
         ListView mainList = (ListView) findViewById(R.id.lv_list);
         if (mainList != null) {
@@ -273,25 +240,6 @@ public class SecondActivity extends AppCompatActivity {
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
-        }
-    }
-
-    private void completedMainList() {
-        for (MainList main: ml) {
-            for (Items items: main.getItems()) {
-                if (!items.isPurchased()) {
-                    main.setComplete(MainActivity.Completed.NOT_COMPLETED.toString());
-                    break;
-                } else {
-                    main.setComplete(MainActivity.Completed.COMPLETED.toString());
-                    break;
-                }
-            }
-            try {
-                getDatabaseHelper().getmMainListDao().update(main);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
 

@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
             final ListView listView = (ListView) findViewById(R.id.lv_list);
             adapter = new ListMainAdapter(MainActivity.this, (ArrayList<MainList>) mainList);
 
+            completedMainList();
+
             Button add = (Button) findViewById(R.id.button_add);
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -126,11 +128,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         refresh();
-        try {
-            Log.i("What's in database", getDatabaseHelper().getmMainListDao().queryForAll().toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         super.onResume();
     }
 
